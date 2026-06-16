@@ -1,0 +1,20 @@
+# Testing Requirements
+
+This file contains the testing dependencies for the project.
+
+## Dependencies
+
+- pytest
+- pytest-asyncio
+- pytest-cov
+- pytest-xdist
+- pytest-timeout
+- pytest-mock
+- playwright
+- responses
+- aioresponses
+- flake8
+- pylint
+- black
+- pytest-html
+- allure-pytest
