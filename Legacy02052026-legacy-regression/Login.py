@@ -14,7 +14,7 @@ def main():
         page = context.new_page()
 
         # Navigate to the login page
-        page.goto("https://www.capitaliq.com")  # Replace with the actual URL
+        page.goto("https://www.stagingciq.com")  # Replace with the actual URL
 
         # Fill in the login form
         page.locator("//*[@id='input28']").fill("test_ciqmi@spglobal.com")
