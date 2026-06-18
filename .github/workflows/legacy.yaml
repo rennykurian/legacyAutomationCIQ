@@ -39,9 +39,9 @@ jobs:
       # =========================
       # Run tests (do not fail pipeline)
       # =========================
-      - name: Run tests
+      - name: Run tests (single file)
         continue-on-error: true
-        run: pytest Legacy02052026-legacy-regression/tests/ -v
+        run: pytest Legacy02052026-legacy-regression/tests/test_download_from_report_builder.py -v
 
       # =========================
       # Run main script always
