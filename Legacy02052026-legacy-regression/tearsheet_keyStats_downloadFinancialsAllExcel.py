@@ -11,7 +11,7 @@ async def generate_save_excel_report_tearsheetKeyStats_downloadFinancials():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
         # Login
         playwright, browser, page = await login()
