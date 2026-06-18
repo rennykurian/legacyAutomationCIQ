@@ -38,7 +38,7 @@ jobs:
       # ✅ Run tests but do NOT stop workflow on failure
       - name: Run tests
         continue-on-error: true
-        run: pytest tests/ -v
+        run: pytest Legacy02052026-legacy-regression/tests/ -v
 
       # ✅ Always run main script even if tests fail
       - name: Run main script
