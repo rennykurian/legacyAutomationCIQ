@@ -1,3 +1,4 @@
+pyautogui
 pytest
 pytest-asyncio
 pytest-cov
