@@ -1,30 +1,28 @@
 import pytest
-import asyncio
 import os
 import sys
 import pandas as pd
 
-# ✅ Ensure Python can find root folder
+# Ensure root folder access
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# ✅ Store failures globally
 FAILED_TESTS = []
 
 
 # =========================
-# MARKERS REGISTRATION
+# MARKERS
 # =========================
 def pytest_configure(config):
     config.addinivalue_line(
-        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+        "markers", "slow: marks tests as slow"
     )
     config.addinivalue_line(
-        "markers", "binder: marks tests as binder-related tests"
+        "markers", "binder: marks binder tests"
     )
 
 
 # =========================
-# CAPTURE FAILURES
+# CAPTURE FAILURES + SCREENSHOT
 # =========================
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -32,10 +30,25 @@ def pytest_runtest_makereport(item, call):
     report = outcome.get_result()
 
     if report.when == "call" and report.failed:
+
+        screenshot_path = None
+
+        # Try to access Playwright page fixture
+        page = item.funcargs.get("page", None)
+
+        if page:
+            os.makedirs("screenshots", exist_ok=True)
+            screenshot_path = f"screenshots/{item.name}.png"
+            try:
+                page.screenshot(path=screenshot_path, full_page=True)
+            except Exception as e:
+                screenshot_path = None
+
         FAILED_TESTS.append({
             "test_name": item.name,
             "file": item.location[0],
-            "error": str(report.longrepr)
+            "error": str(report.longrepr),
+            "screenshot": screenshot_path
         })
 
 
