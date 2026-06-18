@@ -47,7 +47,7 @@ jobs:
       # ✅ Always run main script even if tests fail
       - name: Run main script
         if: always()
-        run: python Legacy02052026-legacy-regression/test_main.py
+        run: python Login.py
 
       # ✅ Always upload artifacts even if failures happen
       - name: Upload downloads
