@@ -17,10 +17,10 @@ def main():
         page.goto("https://www.stagingciq.com")  # Replace with the actual URL
 
         # Fill in the login form
-        page.locator("//*[@id='input28']").fill("test_ciqmi@spglobal.com")
+        page.locator("//*[@id='input28']").fill("test.user124@spglobal.com")
         page.locator("//*[@id='form20']/div[2]/input").click()
         #page.wait_for_selector("//*[@id='input62']")
-        page.locator("xpath=/html/body/div[1]/div[3]/div[2]/div[1]/div/main/div[2]/div/div/div[2]/form/div[1]/div[4]/div/div[2]/span/input").fill("Monsoon@123")
+        page.locator("xpath=/html/body/div[1]/div[3]/div[2]/div[1]/div/main/div[2]/div/div/div[2]/form/div[1]/div[4]/div/div[2]/span/input").fill("Testuser123")
         # Click the login button
         page.locator("xpath=/html/body/div[1]/div[3]/div[2]/div[1]/div/main/div[2]/div/div/div[2]/form/div[2]/input").click()  # Replace with the correct selector
         # Wait for navigation or a specific element

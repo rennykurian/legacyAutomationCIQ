@@ -10,7 +10,7 @@ async def generate_ten_kExcel_from_tearsheet():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
         playwright, browser, page = await login()
 
