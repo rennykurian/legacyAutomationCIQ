@@ -23,33 +23,58 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r Legacy02052026-legacy-regression/requirements.txt
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('Legacy02052026-legacy-regression/requirements.txt') }}
-
+      # =========================
+      # Playwright setup
+      # =========================
       - name: Install Playwright system dependencies
         run: python -m playwright install-deps
 
       - name: Install Playwright browsers
         run: python -m playwright install
 
-      # ✅ Run tests but do NOT stop workflow on failure
+      # =========================
+      # Run tests (do not fail pipeline)
+      # =========================
       - name: Run tests
         continue-on-error: true
         run: pytest Legacy02052026-legacy-regression/tests/ -v
 
-      # ✅ Always run main script even if tests fail
+      # =========================
+      # Run main script always
+      # =========================
       - name: Run main script
         if: always()
         run: python Legacy02052026-legacy-regression/Login.py
 
-      # ✅ Always upload artifacts even if failures happen
+      # =========================
+      # Upload downloads
+      # =========================
       - name: Upload downloads
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: downloaded-files
           path: Legacy02052026-legacy-regression/downloads/
+          if-no-files-found: ignore
+
+      # =========================
+      # Upload Excel failure report
+      # =========================
+      - name: Upload test failure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failure-report
+          path: Legacy02052026-legacy-regression/tests/test_failure_report.xlsx
+          if-no-files-found: ignore
+
+      # =========================
+      # Upload screenshots (NEW)
+      # =========================
+      - name: Upload failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots
+          path: Legacy02052026-legacy-regression/screenshots/
           if-no-files-found: ignore
