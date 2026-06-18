@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('Legacy02052026-legacy-regression/requirements.txt') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
 
       - name: Install Playwright system dependencies
         run: python -m playwright install-deps
@@ -39,7 +39,7 @@ jobs:
       - name: Install Playwright browsers
         run: python -m playwright install
 
-      # ✅ Run all tests but DO NOT stop workflow if they fail
+      # ✅ Run tests but do NOT stop workflow on failure
       - name: Run tests
         continue-on-error: true
         run: pytest tests/ -v
