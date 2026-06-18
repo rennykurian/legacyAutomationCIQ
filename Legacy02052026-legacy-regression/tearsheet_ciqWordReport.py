@@ -11,7 +11,7 @@ async def generate_save_ciq_report_tearsheet():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
         # Login
         playwright, browser, page = await login()
