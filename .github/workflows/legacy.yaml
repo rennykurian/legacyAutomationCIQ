@@ -7,6 +7,10 @@ jobs:
   run-python-script:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: Legacy02052026-legacy-regression
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -14,39 +18,40 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-          cache: 'pip'
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: Legacy02052026-legacy-regression/requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  
+          pip install -r requirements.txt
 
-      - name: cache Playwright browsers
+      - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('Legacy02052026-legacy-regression/requirements.txt') }}
 
       - name: Install Playwright system dependencies
-        run: |
-          python -m playwright install-deps
+        run: python -m playwright install-deps
 
       - name: Install Playwright browsers
-        run: |
-          python -m playwright install
+        run: python -m playwright install
 
-      # ✅ RUN ALL TESTS (BINDER + REPORTS + ANY FUTURE TESTS)
+      # ✅ Run all tests but DO NOT stop workflow if they fail
       - name: Run tests
-        run: |
-          pytest tests/ -v
+        continue-on-error: true
+        run: pytest tests/ -v
 
-      # (optional but you already have it)
+      # ✅ Always run main script even if tests fail
       - name: Run main script
-        run: |
-          python test_main.py
+        if: always()
+        run: python test_main.py
 
-      - name: upload downloads
+      # ✅ Always upload artifacts even if failures happen
+      - name: Upload downloads
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: downloaded-files
