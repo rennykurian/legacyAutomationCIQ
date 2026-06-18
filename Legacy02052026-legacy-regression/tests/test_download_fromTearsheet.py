@@ -5,10 +5,10 @@ import sys
 # ✅ Ensure Python can find your module (root folder)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from tearsheet_ciqWordReport import  generate_save_ciq_report_tearsheet
+from tearsheet_ciqWordReport import generate_save_ciq_report_tearsheet
 from tearsheet_QuickReport import generate_save_quick_report_fromTearsheet
 from tearsheet_tenK_excel import generate_ten_kExcel_from_tearsheet
-from tearsheet_tenK_word import  generate_ten_kWORD_from_tearsheet  
+from tearsheet_tenK_word import  generate_ten_kWORD_from_tearsheet
 from tearsheet_tenK_pdf import generate_ten_kPDF_from_tearsheet
 
 @pytest.mark.asyncio
