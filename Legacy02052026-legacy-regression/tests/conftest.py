@@ -2,14 +2,19 @@ import pytest
 import asyncio
 import os
 import sys
+import pandas as pd
 
-# ✅ Ensure Python can find your module (root folder)
+# ✅ Ensure Python can find root folder
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# ✅ Store failures globally
+FAILED_TESTS = []
 
-# ✅ Custom markers
+
+# =========================
+# MARKERS REGISTRATION
+# =========================
 def pytest_configure(config):
-    """Register custom pytest markers."""
     config.addinivalue_line(
         "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
     )
@@ -18,9 +23,32 @@ def pytest_configure(config):
     )
 
 
-# ✅ Run tests sequentially (not in parallel) to save login time
-def pytest_configure(config):
-    """Disable parallel execution by default."""
-    # This ensures tests run one after another, not in parallel
-    # You can still use -n flag to override if pytest-xdist is installed
-    pass
+# =========================
+# CAPTURE FAILURES
+# =========================
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        FAILED_TESTS.append({
+            "test_name": item.name,
+            "file": item.location[0],
+            "error": str(report.longrepr)
+        })
+
+
+# =========================
+# GENERATE EXCEL REPORT
+# =========================
+def pytest_sessionfinish(session, exitstatus):
+    if FAILED_TESTS:
+        report_file = "test_failure_report.xlsx"
+
+        df = pd.DataFrame(FAILED_TESTS)
+        df.to_excel(report_file, index=False)
+
+        print("\n==============================")
+        print(f"Excel report generated: {report_file}")
+        print("==============================\n")
