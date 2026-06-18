@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r Legacy02052026-legacy-regression/requirements.txt
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -47,7 +47,7 @@ jobs:
       # ✅ Always run main script even if tests fail
       - name: Run main script
         if: always()
-        run: python test_main.py
+        run: python Legacy02052026-legacy-regression/test_main.py
 
       # ✅ Always upload artifacts even if failures happen
       - name: Upload downloads
