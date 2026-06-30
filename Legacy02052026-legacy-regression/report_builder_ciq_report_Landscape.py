@@ -76,7 +76,7 @@ async def generate_and_save_CiqReport_landscape():
         dl_btn = report_page.get_by_role("link", name="Download").or_(
             report_page.get_by_role("button", name="Download")
         ).first
-        await dl_btn.wait_for(state="visible", timeout=30000)
+        await dl_btn.wait_for(state="visible", timeout=50000)
         print("✅ Download button ready.")
         async with report_page.expect_download(timeout=120000) as download_info:
             await dl_btn.click()

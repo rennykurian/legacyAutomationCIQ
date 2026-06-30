@@ -74,10 +74,15 @@ async def generate_save_ciq_report_tearsheet():
 
         print("📥 Generating report and waiting for download...")
 
-        # Capture download event
-        async with page.expect_download(timeout=120000) as download_info:
-            await report_button.click()
 
+        # Capture download event
+        """async with page.expect_download(timeout=120000) as download_info:
+            await report_button.click()
+            await page.wait_for_timeout(60000)"""
+        async with page.expect_download(timeout=180000) as download_info:
+            await report_button.dispatch_event("click")
+
+        #download = await download_info.value
         download = await download_info.value
 
         # Create downloads folder

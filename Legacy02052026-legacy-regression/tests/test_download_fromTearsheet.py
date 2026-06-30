@@ -10,6 +10,7 @@ from tearsheet_QuickReport import generate_save_quick_report_fromTearsheet
 from tearsheet_tenK_excel import generate_ten_kExcel_from_tearsheet
 from tearsheet_tenK_word import  generate_ten_kWORD_from_tearsheet
 from tearsheet_tenK_pdf import generate_ten_kPDF_from_tearsheet
+from tearsheet_TearsheetReport import generate_tearsheet_fromTearsheet
 
 @pytest.mark.asyncio
 async def test_generate_tearsheet_report_word_download():  
@@ -36,4 +37,8 @@ async def test_generate_tearsheet_10K_pdf_download():
     result = await generate_ten_kPDF_from_tearsheet()
     assert result is not None, "Download path is None"
     assert os.path.exists(result), f"File does not exist: {result}" 
-
+@pytest.mark.asyncio
+async def test_generate_tearsheet_report_download():  
+    result = await generate_tearsheet_fromTearsheet()
+    assert result is not None, "Download path is None"
+    assert os.path.exists(result), f"File does not exist: {result}" 

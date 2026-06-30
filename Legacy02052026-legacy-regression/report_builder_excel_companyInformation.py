@@ -1,4 +1,4 @@
-import asyncio
+"""import asyncio
 import os
 from TestLoginLegacy import login
 from test_handleCookie import handle_cookie_popup
@@ -10,7 +10,7 @@ async def generate_save_excel_report():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "1"  # run headed so output is visible
+        os.environ["PLAYWRIGHT_HEADLESS"] = "0"  # run headed so output is visible
 
         playwright, browser, page = await login()
         await handle_cookie_popup(page)
@@ -28,7 +28,7 @@ async def generate_save_excel_report():
         await page.hover('#tmbButton1')
         print("✅ Hovered over My Capital IQ")
 
-        await page.wait_for_timeout(1500)
+        await page.wait_for_timeout(15000)
 
         flyout = page.locator("#__tmbFlyout1")
         await flyout.wait_for(state="attached", timeout=15000)
@@ -115,7 +115,7 @@ async def generate_save_excel_report():
         dl_btn = report_page.get_by_role("link", name="Download").or_(
             report_page.get_by_role("button", name="Download")
         ).first
-        await dl_btn.wait_for(state="visible", timeout=60000)
+        await dl_btn.wait_for(state="visible", timeout=70000)
         print("✅ Download button ready.")
         async with report_page.expect_download(timeout=120000) as download_info:
             await dl_btn.click()
@@ -151,6 +151,160 @@ async def generate_save_excel_report():
                 pass
 
 
+
+if __name__ == "__main__":
+    asyncio.run(generate_save_excel_report())"""
+# report_builder_excel_companyInformation.py
+# NOTE:
+# This is based on your latest script with the recommended robustness/debug updates.
+import asyncio
+import os
+from TestLoginLegacy import login
+from test_handleCookie import handle_cookie_popup
+
+async def generate_save_excel_report():
+    playwright = None
+    browser = None
+    page = None
+
+    try:
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
+
+        playwright, browser, page = await login()
+        await handle_cookie_popup(page)
+
+        await page.goto(
+            "https://www.capitaliq.com/CIQDotNet/my/dashboard.aspx",
+            wait_until="networkidle"
+        )
+        print("✅ Dashboard loaded.")
+
+        await page.wait_for_selector("#tmbButton1", timeout=30000)
+        await page.hover("#tmbButton1")
+        print("✅ Hovered over My Capital IQ")
+
+        await page.wait_for_timeout(3000)
+
+        flyout = page.locator("#__tmbFlyout1")
+        await flyout.wait_for(state="visible", timeout=30000)
+
+        report_builder = flyout.locator("a[href*='ReportsBuilder']")
+
+        count = await report_builder.count()
+        print(f"Found {count} ReportBuilder link(s)")
+        for i in range(count):
+            try:
+                print(
+                    i,
+                    await report_builder.nth(i).inner_text(),
+                    await report_builder.nth(i).get_attribute("href")
+                )
+            except Exception:
+                pass
+
+        await report_builder.first.click(force=True)
+        await page.wait_for_timeout(3000)
+
+        print("Current URL:", page.url)
+        await page.screenshot(path="debug_after_report_builder_click.png", full_page=True)
+
+        await page.wait_for_selector(
+            "#_rptOpts__rptOptsDS__optsDs__optsTog__esLink",
+            timeout=60000
+        )
+        print("✅ Report Builder loaded.")
+
+        await page.click("#_rptOpts__rptOptsDS__optsDs__optsTog__esLink")
+        print("✅ Entity selection modal opened.")
+        await page.screenshot(path="debug_entity_modal.png", full_page=True)
+
+        search_box = "#_rptOpts__rptOptsDS__optsDs__optsTog_float_esModal__rptOpts__rptOptsDS__optsDs__optsTog_float_esModal__es_searchbox"
+        await page.wait_for_selector(search_box, timeout=30000)
+        await page.fill(search_box, "Bank of America Corporation")
+        await page.wait_for_timeout(3000)
+
+        await page.keyboard.press("ArrowDown")
+        await page.keyboard.press("Enter")
+
+        await page.click("#_rptOpts__rptOptsDS__optsDs__optsTog_float_esModal__es-ava-g-10001 > ul > li:nth-child(1) > table > tbody > tr > td.tree-data > div")
+        await page.click("#_rptOpts__rptOptsDS__optsDs__optsTog_float_esModal_ctl12__saveBtn")
+        await page.click("#_rptOpts__rptOptsDS__optsDs__optsTog_float_esModal__esSaveCancel__saveBtn")
+
+        print("✅ Entity selection saved.")
+
+        await page.wait_for_load_state("networkidle")
+
+        company_checkbox = page.locator('input[name="_categoriesDS$Toggle$_sortList$ctl01$sect$_selectedCb"]')
+        if not await company_checkbox.is_checked():
+            await company_checkbox.check()
+        print("✅ Company Information selected")
+
+        await page.locator("img[src*='ico_doctype_excel.gif']").first.click()
+        print("✅ Excel radio selected")
+
+        await page.wait_for_load_state("networkidle")
+
+        generate_btn = page.locator("#_rptOpts__rptOptsDS__optsDs__optsTog__generateReportBtn")
+        await generate_btn.wait_for(state="visible", timeout=30000)
+        await generate_btn.click()
+        #added to make sure what we receive
+        print("✅ Generate Report clicked")
+        await page.wait_for_timeout(5000)
+
+        print("========== OPEN PAGES ==========")
+
+        for i, p in enumerate(page.context.pages):
+            print(f"Page {i}: {p.url}")
+
+        print("================================")
+
+        report_page = page
+        try:
+            async with page.context.expect_page(timeout=12000) as popup:
+                pass
+            report_page = await popup.value
+            await report_page.wait_for_load_state("domcontentloaded")
+        except Exception:
+            await page.wait_for_selector("div.wrapper", timeout=60000)
+
+        dl_btn = report_page.get_by_role("link", name="Download").or_(
+            report_page.get_by_role("button", name="Download")
+        ).first
+
+        await dl_btn.wait_for(state="visible", timeout=70000)
+
+        async with report_page.expect_download(timeout=120000) as d:
+            await dl_btn.click()
+
+        download = await d.value
+        os.makedirs("downloads", exist_ok=True)
+        save_path = os.path.join("downloads", download.suggested_filename)
+        await download.save_as(save_path)
+        print(f"✅ Saved: {save_path}")
+        return save_path
+
+    except Exception as e:
+        print("❌ Error:", e)
+        try:
+            print("Current URL:", page.url)
+            await page.screenshot(path="FAILED_TEST.png", full_page=True)
+            print("📷 Screenshot saved.")
+        except Exception:
+            pass
+        return None
+
+    finally:
+        print("🔒 Closing browser...")
+        if browser:
+            try:
+                await browser.close()
+            except Exception:
+                pass
+        if playwright:
+            try:
+                await playwright.stop()
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     asyncio.run(generate_save_excel_report())

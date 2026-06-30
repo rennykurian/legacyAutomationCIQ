@@ -74,15 +74,17 @@ async def generate_save_excel_report_tearsheetKeyStats_downloadFinancials():
 
         # ----------------------------
         # DOWNLOAD
+        #<img title="Download Financials to Excel" src="https://www.capitaliq.com/CIQDOTNET/images/BinderToolbar/ico_reportImg_Sprite.gif?urwvid=3774410752" alt="">
         # ----------------------------
-        download_link = page.locator("#_pageHeader__singleTabReport")
+        download_link = page.locator("#_pageHeader__excelReport")
+        
 
         await download_link.wait_for(state="visible", timeout=10000)
        
         print("📥 Starting Excel download...")
 
         async with page.expect_download(timeout=120000) as download_info:
-            await download_link.click()
+            await download_link.click(no_wait_after=True)
             
 
         download = await download_info.value

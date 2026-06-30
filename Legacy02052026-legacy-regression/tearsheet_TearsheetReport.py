@@ -5,7 +5,7 @@ from TestLoginLegacy import login
 from test_handleCookie import handle_cookie_popup
 
 
-async def generate_save_excel_report():
+async def generate_tearsheet_fromTearsheet():
     playwright = None
     browser = None
     page = None
@@ -88,7 +88,7 @@ async def generate_save_excel_report():
         filename = download.suggested_filename
 
         if not filename:
-            filename = "Detailed_Report.pdf"
+            filename = "TearsheetFromTearsheet.rtf"
 
         save_path = os.path.join(save_folder, filename)
 
@@ -120,4 +120,4 @@ async def generate_save_excel_report():
 
 
 if __name__ == "__main__":
-    asyncio.run(generate_save_excel_report())
+    asyncio.run(generate_tearsheet_fromTearsheet())
