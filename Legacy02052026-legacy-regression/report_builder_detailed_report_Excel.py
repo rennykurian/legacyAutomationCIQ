@@ -10,7 +10,7 @@ async def generate_and_save_detailed_report_excel():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
         playwright, browser, page = await login()
         await handle_cookie_popup(page)

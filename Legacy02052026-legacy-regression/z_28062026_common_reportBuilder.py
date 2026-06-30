@@ -150,7 +150,7 @@ async def selectCompany():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
         playwright, browser, page = await login()
         await handle_cookie_popup(page)
@@ -412,7 +412,20 @@ async def downloadReport(report_page):
         timeout=300000       # 5 minutes
     )
 
+    
     print("✅ Download button visible.")
+
+    await report_page.screenshot(path="before_download.png", full_page=True)
+    print("Title:", await report_page.title())
+    print("URL:", report_page.url)
+
+    print("Download button visible:", await download_btn.is_visible())
+    print("Download button enabled:", await download_btn.is_enabled())
+
+    async with report_page.expect_download(timeout=300000) as download_info:
+        print("Clicking download button...")
+        await download_btn.click()
+        print("Click completed.")
 
     async with report_page.expect_download(
         timeout=300000

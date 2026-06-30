@@ -10,7 +10,7 @@ async def generate_save_word_report():
     page = None
 
     try:
-        os.environ["PLAYWRIGHT_HEADLESS"] = "0"  # run headed so output is visible
+        os.environ["PLAYWRIGHT_HEADLESS"] = "1"  # run headed so output is visible
 
         playwright, browser, page = await login()
         await handle_cookie_popup(page)
