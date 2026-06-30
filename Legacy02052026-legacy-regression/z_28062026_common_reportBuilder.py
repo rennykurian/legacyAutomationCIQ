@@ -152,7 +152,7 @@ async def selectCompany():
     try:
         os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
-        playwright, browser, page = await login()
+        playwright, browser, page = await main()
         await handle_cookie_popup(page)
         await page.wait_for_timeout(2000)
 
