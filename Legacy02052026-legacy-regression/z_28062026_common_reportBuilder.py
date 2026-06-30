@@ -1,6 +1,6 @@
 import asyncio
 import os
-from TestLoginLegacy import login
+from Login import login
 from test_handleCookie import handle_cookie_popup
 
 """
