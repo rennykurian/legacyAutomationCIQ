@@ -1,6 +1,6 @@
 import asyncio
 import os
-from Login import main
+from Login import login
 from test_handleCookie import handle_cookie_popup
 
 """
@@ -152,12 +152,12 @@ async def selectCompany():
     try:
         os.environ["PLAYWRIGHT_HEADLESS"] = "1"
 
-        playwright, browser, page = await main()
+        playwright, browser, page = await login()
         await handle_cookie_popup(page)
         await page.wait_for_timeout(2000)
 
         await page.goto(
-            "https://www.capitaliq.com/CIQDotNet/my/dashboard.aspx",
+            "https://www.stagingciq.com/CIQDotNet/my/dashboard.aspx",
             wait_until="domcontentloaded"
         )
 
