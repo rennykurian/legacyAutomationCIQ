@@ -41,7 +41,7 @@ jobs:
       # =========================
       - name: Run tests 
         continue-on-error: true
-        run: pytest Legacy02052026-legacy-regression/tests/test_28082026.py -v
+        run: pytest Legacy02052026-legacy-regression/tests/test_28062026.py -v
 
       # =========================
       # Run main script always
